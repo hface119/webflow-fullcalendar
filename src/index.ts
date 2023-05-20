@@ -1,4 +1,4 @@
-import { Calendar } from '@fullcalendar/core';
+import { Calendar, formatDate } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -14,11 +14,13 @@ window.Webflow.push(() => {
   const calendar = new Calendar(calendarElement, {
     plugins: [dayGridPlugin, timeGridPlugin, listPlugin],
     initialView: 'dayGridMonth',
+    contentHeight: 'auto',
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
       right: 'dayGridMonth,timeGridWeek,listWeek',
     },
+
     events,
   });
 
@@ -30,7 +32,10 @@ const getEvents = (): Event[] => {
   const events = [...scripts].map((script) => {
     const event: Event = JSON.parse(script.textContent!);
     event.start = new Date(event.start);
-    event.end = new Date(event.end);
+    // Adding 1 day to the end property
+    const endDate = new Date(event.end);
+    endDate.setDate(endDate.getDate() + 1);
+    event.end = endDate;
 
     return event;
   });
